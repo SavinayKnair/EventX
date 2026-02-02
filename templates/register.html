@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h3>Register for {{ event.title }}</h3>
+
+<form method="post" class="card p-4 shadow">
+    {% csrf_token %}
+    <input class="form-control mb-3" name="name" placeholder="Full Name" required>
+    <input class="form-control mb-3" name="email" type="email" placeholder="Email" required>
+    <input class="form-control mb-3" name="phone" placeholder="Phone" required>
+    <button class="btn btn-primary">Submit</button>
+</form>
+
+{% endblock %}

@@ -1,0 +1,154 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EventX | Premium Event Planning</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+            --glass-bg: rgba(255, 255, 255, 0.8);
+        }
+
+        body { font-family: 'Outfit', sans-serif; background: #f8fafc; }
+
+        /* --- THE BEST NAVBAR --- */
+        .glass-nav {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 20px 0;
+        }
+
+        .glass-nav.scrolled {
+            padding: 12px 0;
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+
+        /* Logo Animation */
+        .navbar-brand {
+            font-size: 1.8rem;
+            letter-spacing: -1px;
+            transition: transform 0.3s ease;
+        }
+        .navbar-brand:hover { transform: scale(1.05); }
+        .logo-icon {
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 2px 4px rgba(99, 102, 241, 0.3));
+        }
+
+        /* Nav Links Hover Effect */
+        .nav-link {
+            font-weight: 500;
+            color: #475569 !important;
+            position: relative;
+            transition: color 0.3s ease;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 50%;
+            background: var(--primary-gradient);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+        .nav-link:hover::after { width: 80%; }
+        .nav-link:hover { color: #6366f1 !important; }
+
+        /* Premium Button */
+        .btn-premium {
+            background: var(--primary-gradient);
+            color: white !important;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+        }
+        .btn-premium:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
+        }
+
+        .main-content { margin-top: 120px; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg fixed-top glass-nav">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="/">
+                <i class="fa-solid fa-bolt-lightning logo-icon me-1"></i>Event<span class="text-dark">X</span>
+            </a>
+
+            <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto gap-3 align-items-center">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/"><i class="fa-solid fa-house-chimney small me-1"></i> Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/my-events/"><i class="fa-solid fa-calendar-check small me-1"></i> My Events</a>
+                    </li>
+                    
+                    {% if user.is_staff %}
+                    <li class="nav-item">
+                        <a class="nav-link fw-bold text-primary" href="{% url 'admin_dashboard' %}">
+                            <i class="fa-solid fa-chart-line small me-1"></i> Admin Panel
+                        </a>
+                    </li>
+                    {% endif %}
+
+                    <li class="nav-item ms-lg-3">
+                        <a class="btn btn-premium" href="/add/">
+                            <i class="fa-solid fa-circle-plus me-1"></i> Create Event
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-content">
+        <div class="container">
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+
+    <footer class="text-center py-5 mt-5">
+        <hr class="w-25 mx-auto mb-4 opacity-10">
+        <p class="text-muted small">&copy; 2026 <strong>EventX</strong>. Elevated Experiences.</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Smooth Scroll Effect for Navbar
+        window.addEventListener('scroll', function() {
+            const nav = document.querySelector('.glass-nav');
+            if (window.scrollY > 50) {
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
+            }
+        });
+    </script>
+</body>
+</html>

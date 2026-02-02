@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row align-items-center py-5">
+    <div class="col-lg-6" data-aos="fade-right">
+        <span class="badge bg-soft-primary text-primary px-3 py-2 rounded-pill mb-3 fw-bold" style="background-color: #e0e7ff;">
+            NEW: Virtual Events Support
+        </span>
+        <h1 class="display-3 fw-bold mb-4">Make Every <span class="text-primary">Moment</span> Iconic.</h1>
+        <p class="lead text-muted mb-4">The most advanced platform for planning, managing, and discovering local events.</p>
+        <div class="d-flex gap-3">
+            <a href="{% url 'add_event' %}" class="btn btn-premium btn-lg shadow-lg">Get Started Free</a>
+            <a href="#events" class="btn btn-outline-dark btn-lg rounded-pill px-4">Browse Events</a>
+        </div>
+    </div>
+    <div class="col-lg-6 text-center" data-aos="zoom-in">
+        <img src="https://illustrations.popsy.co/amber/celebration.svg" alt="EventX Hero" class="img-fluid" style="max-height: 450px; filter: drop-shadow(0 20px 30px rgba(0,0,0,0.1));">
+    </div>
+</div>
+
+<div id="events" class="py-5">
+    <div class="d-flex justify-content-between align-items-end mb-5">
+        <div>
+            <h2 class="fw-bold mb-0">Trending Now 🔥</h2>
+            <p class="text-muted">Handpicked events for you</p>
+        </div>
+        <div class="d-none d-md-block">
+            <a href="#" class="text-primary fw-bold text-decoration-none">See all categories <i class="fa-solid fa-arrow-right ms-1"></i></a>
+        </div>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        {% for event in events %}
+        <div class="col">
+            <div class="card h-100 border-0 shadow-sm overflow-hidden" style="border-radius: 24px; transition: all 0.3s ease-in-out;">
+                <div class="position-relative">
+                    {% if event.image %}
+                        <img src="{{ event.image.url }}" class="card-img-top" style="height: 250px; object-fit: cover;">
+                    {% else %}
+                        <img src="https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=800" class="card-img-top" style="height: 250px; object-fit: cover;">
+                    {% endif %}
+                    
+                    <div style="position: absolute; top: 15px; left: 15px;">
+                        <span class="badge bg-white text-dark shadow-sm px-3 py-2 rounded-pill fw-bold">
+                            {{ event.event_type }}
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center text-muted small mb-2">
+                        <span class="me-3"><i class="fa-regular fa-calendar me-1"></i> {{ event.event_date }}</span>
+                        <span><i class="fa-solid fa-location-dot me-1"></i> {{ event.location }}</span>
+                    </div>
+                    <h5 class="card-title fw-bold mb-4">{{ event.event_name }}</h5>
+                    <a href="{% url 'event_detail' event.id %}" class="btn btn-light w-100 rounded-pill text-primary fw-bold hover-up">
+                        View Details
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-5">
+            <i class="fa-solid fa-calendar-day fa-3x text-light mb-3"></i>
+            <h3 class="text-muted">No events currently scheduled.</h3>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

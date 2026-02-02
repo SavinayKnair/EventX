@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Submit Your Event</h2>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <input type="text" name="event_name" class="form-control mb-2"
+               placeholder="Event Name" required>
+
+        <input type="date" name="event_date" class="form-control mb-2" required>
+
+        <input type="text" name="location" class="form-control mb-2"
+               placeholder="Location" required>
+
+        <input type="text" name="event_type" class="form-control mb-2"
+               placeholder="Event Type" required>
+
+        <textarea name="description" class="form-control mb-3"
+                  placeholder="Description" required></textarea>
+
+        <button class="btn btn-primary">Submit Event</button>
+    </form>
+</div>
+{% endblock %}
