@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>My Events</h2>
+
+{% for event in events %}
+<div class="card" style="margin-bottom:20px; padding:15px; border:1px solid #ccc; border-radius:8px;">
+    <h3>{{ event.event_name }}</h3>
+    <p>Status:
+        {% if event.is_approved %}
+            ✅ Approved
+        {% else %}
+            ⏳ Pending
+        {% endif %}
+    </p>
+</div>
+{% empty %}
+<p>No events uploaded.</p>
+{% endfor %}
+
+{% endblock %}

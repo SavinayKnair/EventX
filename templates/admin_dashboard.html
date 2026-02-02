@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-5">
+    <h2>Admin Event Control</h2>
+    <div class="alert alert-info">Pending Requests: {{ pending_count }}</div>
+    
+    <table class="table align-middle">
+        <thead class="table-dark">
+            <tr>
+                <th>Event</th>
+                <th>Status</th>
+                <th>Featured</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for event in events %}
+            <tr>
+                <td>{{ event.event_name }}</td>
+                <td>
+                    {% if event.is_approved %}
+                        <span class="badge bg-success">Approved</span>
+                    {% else %}
+                        <span class="badge bg-warning text-dark">Pending</span>
+                    {% endif %}
+                </td>
+                <td>{% if event.is_featured %}★ Yes{% else %}No{% endif %}</td>
+                <td>
+                    {% if not event.is_approved %}
+                    <form action="{% url 'approve_event' event.id %}" method="POST" style="display:inline;">
+                        {% csrf_token %}<button class="btn btn-sm btn-success">Approve</button>
+                    </form>
+                    <form action="{% url 'reject_event' event.id %}" method="POST" style="display:inline;">
+                        {% csrf_token %}<button class="btn btn-sm btn-outline-danger">Reject</button>
+                    </form>
+                    {% endif %}
+
+                    <a href="{% url 'edit_event_admin' event.id %}" class="btn btn-sm btn-primary">Edit</a>
+                    
+                    <form action="{% url 'toggle_featured' event.id %}" method="POST" style="display:inline;">
+                        {% csrf_token %}<button class="btn btn-sm btn-warning">Star</button>
+                    </form>
+
+                    <form action="{% url 'delete_event_admin' event.id %}" method="POST" style="display:inline;" onsubmit="return confirm('Delete permanently?');">
+                        {% csrf_token %}<button class="btn btn-sm btn-danger">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
