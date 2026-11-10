@@ -14,4 +14,10 @@ urlpatterns = [
     path('featured/<int:event_id>/', views.toggle_featured, name='toggle_featured'),
     path('edit-admin/<int:event_id>/', views.edit_event_admin, name='edit_event_admin'),
     path('delete-admin/<int:event_id>/', views.delete_event_admin, name='delete_event_admin'),
+    path('analytics/', views.analytics_dashboard, name='analytics_dashboard'),
+    
+    # Auth Routes
+    path('login/', views.login_user, name='login'),
+    path('logout/', views.logout_user, name='logout'),
+    path('register/', views.register_user, name='register'),
 ]

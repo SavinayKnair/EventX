@@ -1,0 +1,200 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold"><i class="fa-solid fa-chart-pie me-2 text-primary"></i> Data Analytics Dashboard</h2>
+    <a href="{% url 'admin_dashboard' %}" class="btn btn-outline-secondary rounded-pill">
+        <i class="fa-solid fa-arrow-left me-1"></i> Back to Admin
+    </a>
+</div>
+
+<!-- KPI Cards -->
+<div class="row g-4 mb-4">
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+            <div class="card-body text-center p-4">
+                <div class="text-primary fs-1 mb-2">
+                    <i class="fa-solid fa-calendar-days"></i>
+                </div>
+                <h6 class="text-muted text-uppercase fw-bold mb-1">Total Events</h6>
+                <h2 class="fw-bold mb-0">{{ total_events }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+            <div class="card-body text-center p-4">
+                <div class="text-success fs-1 mb-2">
+                    <i class="fa-solid fa-circle-check"></i>
+                </div>
+                <h6 class="text-muted text-uppercase fw-bold mb-1">Approved Events</h6>
+                <h2 class="fw-bold mb-0">{{ approved_events }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+            <div class="card-body text-center p-4">
+                <div class="text-warning fs-1 mb-2">
+                    <i class="fa-solid fa-clock"></i>
+                </div>
+                <h6 class="text-muted text-uppercase fw-bold mb-1">Pending Approval</h6>
+                <h2 class="fw-bold mb-0">{{ pending_events }}</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts Section -->
+<div class="row g-4 mb-4">
+    <!-- Line Chart: Events Over Time -->
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+            <div class="card-body p-4">
+                <h5 class="fw-bold mb-4">Events Created Over Time</h5>
+                <canvas id="eventsTimelineChart" style="max-height: 350px;"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Doughnut Chart: Events by Type -->
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+            <div class="card-body p-4">
+                <h5 class="fw-bold mb-4">Events by Type</h5>
+                <canvas id="eventTypesChart" style="max-height: 350px;"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Events Table -->
+<div class="card border-0 shadow-sm rounded-4 mb-5">
+    <div class="card-body p-4">
+        <h5 class="fw-bold mb-4">Most Recent Events</h5>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Event Name</th>
+                        <th>Organizer</th>
+                        <th>Date</th>
+                        <th>Type</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for event in latest_events %}
+                    <tr>
+                        <td class="fw-bold">{{ event.event_name }}</td>
+                        <td>{{ event.user.username }}</td>
+                        <td>{{ event.event_date|date:"M d, Y" }}</td>
+                        <td><span class="badge bg-secondary rounded-pill">{{ event.event_type }}</span></td>
+                        <td>
+                            {% if event.is_approved %}
+                                <span class="badge bg-success rounded-pill px-3 py-2"><i class="fa-solid fa-check me-1"></i> Approved</span>
+                            {% else %}
+                                <span class="badge bg-warning text-dark rounded-pill px-3 py-2"><i class="fa-solid fa-clock me-1"></i> Pending</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center text-muted py-4">No events found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Chart.js Setup -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Data passed from Django view
+    const typesLabels = JSON.parse('{{ types_labels_json|safe }}');
+    const typesValues = JSON.parse('{{ types_values_json|safe }}');
+    
+    const datesLabels = JSON.parse('{{ dates_labels_json|safe }}');
+    const datesValues = JSON.parse('{{ dates_values_json|safe }}');
+
+    // 1. Doughnut Chart for Event Types
+    const ctxTypes = document.getElementById('eventTypesChart').getContext('2d');
+    new Chart(ctxTypes, {
+        type: 'doughnut',
+        data: {
+            labels: typesLabels,
+            datasets: [{
+                data: typesValues,
+                backgroundColor: [
+                    '#6366f1', '#a855f7', '#ec4899', '#f43f5e', '#facc15', '#22c55e', '#0ea5e9'
+                ],
+                borderWidth: 0,
+                hoverOffset: 10
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'bottom' }
+            },
+            cutout: '70%'
+        }
+    });
+
+    // 2. Line Chart for Events Over Time
+    const ctxTimeline = document.getElementById('eventsTimelineChart').getContext('2d');
+    
+    // Create a gradient for the line chart fill
+    const gradientFill = ctxTimeline.createLinearGradient(0, 0, 0, 400);
+    gradientFill.addColorStop(0, 'rgba(99, 102, 241, 0.4)');
+    gradientFill.addColorStop(1, 'rgba(99, 102, 241, 0.05)');
+
+    new Chart(ctxTimeline, {
+        type: 'line',
+        data: {
+            labels: datesLabels,
+            datasets: [{
+                label: 'Events Created',
+                data: datesValues,
+                borderColor: '#6366f1',
+                backgroundColor: gradientFill,
+                borderWidth: 3,
+                pointBackgroundColor: '#fff',
+                pointBorderColor: '#6366f1',
+                pointBorderWidth: 2,
+                pointRadius: 5,
+                pointHoverRadius: 7,
+                fill: true,
+                tension: 0.4 // curve
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false } // Hide legend for single dataset
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    },
+                    grid: {
+                        borderDash: [5, 5]
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    }
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

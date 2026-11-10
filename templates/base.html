@@ -86,6 +86,20 @@
         }
 
         .main-content { margin-top: 120px; }
+
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: 100px;
+        }
+
+        /* Mobile Scrollable Navbar Collapse */
+        @media (max-width: 991.98px) {
+            .navbar-collapse {
+                max-height: 75vh;
+                overflow-y: auto;
+                padding-bottom: 20px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -106,22 +120,56 @@
                         <a class="nav-link" href="/"><i class="fa-solid fa-house-chimney small me-1"></i> Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/my-events/"><i class="fa-solid fa-calendar-check small me-1"></i> My Events</a>
+                        <a class="nav-link" href="/#about"><i class="fa-solid fa-circle-info small me-1"></i> About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/#instructors"><i class="fa-solid fa-chalkboard-user small me-1"></i> Instructors</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/#contact"><i class="fa-solid fa-envelope small me-1"></i> Contact</a>
                     </li>
                     
-                    {% if user.is_staff %}
-                    <li class="nav-item">
-                        <a class="nav-link fw-bold text-primary" href="{% url 'admin_dashboard' %}">
-                            <i class="fa-solid fa-chart-line small me-1"></i> Admin Panel
-                        </a>
-                    </li>
-                    {% endif %}
+                    {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'my_events' %}"><i class="fa-solid fa-calendar-check small me-1"></i> My Events</a>
+                        </li>
+                        
+                        {% if user.is_staff %}
+                        <li class="nav-item">
+                            <a class="nav-link fw-bold text-primary" href="{% url 'admin_dashboard' %}">
+                                <i class="fa-solid fa-user-shield small me-1"></i> Admin Panel
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link fw-bold text-info" href="{% url 'analytics_dashboard' %}">
+                                <i class="fa-solid fa-chart-pie small me-1"></i> Analytics
+                            </a>
+                        </li>
+                        {% endif %}
 
-                    <li class="nav-item ms-lg-3">
-                        <a class="btn btn-premium" href="/add/">
-                            <i class="fa-solid fa-circle-plus me-1"></i> Create Event
-                        </a>
-                    </li>
+                        <li class="nav-item ms-lg-2">
+                            <a class="nav-link text-danger fw-bold" href="{% url 'logout' %}">
+                                <i class="fa-solid fa-arrow-right-from-bracket small me-1"></i> Logout
+                            </a>
+                        </li>
+
+                        <li class="nav-item ms-lg-3">
+                            <a class="btn btn-premium" href="/add/">
+                                <i class="fa-solid fa-circle-plus me-1"></i> Create Event
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item ms-lg-2">
+                            <a class="nav-link fw-bold" href="{% url 'login' %}">
+                                <i class="fa-solid fa-arrow-right-to-bracket small me-1"></i> Sign In
+                            </a>
+                        </li>
+                        <li class="nav-item ms-lg-3">
+                            <a class="btn btn-premium" href="{% url 'register' %}">
+                                <i class="fa-solid fa-user-plus me-1"></i> Register
+                            </a>
+                        </li>
+                    {% endif %}
                 </ul>
             </div>
         </div>
@@ -147,6 +195,22 @@
                 nav.classList.add('scrolled');
             } else {
                 nav.classList.remove('scrolled');
+            }
+        });
+
+        // Auto-close collapse on mobile when a nav-link is clicked
+        document.addEventListener('DOMContentLoaded', function() {
+            const navLinks = document.querySelectorAll('.nav-link, .btn-premium');
+            const menuToggle = document.getElementById('navbarNav');
+            if (menuToggle) {
+                const bsCollapse = new bootstrap.Collapse(menuToggle, { toggle: false });
+                navLinks.forEach((l) => {
+                    l.addEventListener('click', () => {
+                        if (window.innerWidth < 992 && menuToggle.classList.contains('show')) {
+                            bsCollapse.hide();
+                        }
+                    });
+                });
             }
         });
     </script>
